@@ -1,6 +1,46 @@
-.login-container
-  .panel
-    .panel-head
-      h2 Please sign in to your account
-    .panel-body
-      login-form login="login(creds)" loading="uiState.loading"
+
+input ng-model="product.name"
+br
+input ng-model="product.price"
+br
+br
+a.btn.btn-primary(ng-click="addProduct()") add product
+
+table.table ng-if="products.length > 0"
+  thead
+    tr
+      th Name
+      th Price
+      th
+  tbody
+    tr ng-repeat="obj in products"
+      td
+        span ng-bind="obj.name" ng-if="obj.state == 'show'"
+        input ng-model="obj.name" ng-if="obj.state == 'edit'"
+
+      td
+        span ng-bind="obj.formatPrice()" ng-if="obj.state == 'show'"
+        input ng-model="obj.price" ng-if="obj.state == 'edit'"
+
+      td
+        div ng-if="obj.state == 'show'"
+          a ng-click="editProduct(obj)"  Edit
+          a ng-click="deleteProduct(obj)" Delete
+
+        div ng-if="obj.state == 'edit'"
+          a ng-click="saveProduct(obj)"  Save
+          a ng-click="cancelEdit(obj)"  Cancel
+
+    tr
+      td Total
+      td
+        span ng-bind="calculateTotal()"
+
+h1 ng-bind="products.length"
+//
+  .login-container
+    .panel
+      .panel-head
+        h2 Please sign in to your account
+      .panel-body
+        login-form login="login(creds)" loading="uiState.loading"

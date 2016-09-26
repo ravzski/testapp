@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     scope module: :v1 do
 
       resource :session, only: %i(show create destroy)
+      resources :products
       resources :users  do
         collection do
           put :forgot_password

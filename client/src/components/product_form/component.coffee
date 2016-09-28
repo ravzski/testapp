@@ -20,6 +20,19 @@ angular.module('client').directive 'productForm',->
   scope:
     addProduct: "&"
     categories: "<"
+
+
+angular.module('client').directive 'pagination',->
+  templateUrl: 'components/pagination/index.html'
+  controller: Ctrl
+  restrict: "E"
+  replace: true
+  scope:
+    totalCount: "<"
+    currentPage: "<"
+    perPage: "<"
+    onChange: "&"
+
 #
 # angular.module('client').component 'productForm',
 #   templateUrl: 'components/product_form/index.html'

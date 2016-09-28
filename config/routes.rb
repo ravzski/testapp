@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
       resource :session, only: %i(show create destroy)
       resources :products
+      resources :categories
       resources :users  do
         collection do
           put :forgot_password

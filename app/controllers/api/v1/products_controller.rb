@@ -39,6 +39,7 @@ class Api::V1::ProductsController < ApiController
     params.require(:product).permit(*%i(
       name
       price
+      category_id
     ))
   end
 

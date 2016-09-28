@@ -1,6 +1,6 @@
 class Product < ApplicationRecord
 
-  validates :name,:price, presence: true
-
-
+  belongs_to :category
+  
+  validates :name,:price,:category, presence: true
 end

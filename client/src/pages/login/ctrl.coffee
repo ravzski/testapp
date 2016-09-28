@@ -1,15 +1,26 @@
 Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
 
   $scope.products = []
-  $scope.myName = "rav"
+  $scope.categories = []
+  $scope.errors = []
   tempProduct = {}
-  $scope.user =
-    age: 0
+  tempCategory = {}
+  $scope.hide =
+    formProduct: true
+    buttonProduct: false
+    form: true
+    button: false
 
   $scope.product =
     name: ""
     price: 0
     state: "show"
+
+  $scope.category =
+    name: ""
+    state: "show"
+
+  $scope.sortVal = ""
 
   $scope.cancelEdit =(obj)->
     obj.name = tempProduct.name
@@ -20,7 +31,10 @@ Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
   $scope.saveProduct =(obj)->
     $http.patch("/api/products/#{obj.id}", {product: obj})
     obj.state = 'show'
-    obj.save()
+    for category in $scope.categories
+      if category.id == obj.category_id
+        obj.category = category.name
+    #obj.save()
 
   $scope.deleteProduct =(obj)->
     $http.delete("/api/products/#{obj.id}")
@@ -38,33 +52,94 @@ Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
 
   $scope.getProducts = ->
     Product.query().$promise
-      .then (dat)->
+      .then (data)->
         for product in data
           product.state = 'show'
+          for category in $scope.categories
+            if category.id == product.category_id
+              product.category = category.name
           $scope.products.push product
 
   $scope.addProduct = ->
     Product.save({product: $scope.product}).$promise
       .then (data)->
         data.state = 'show'
+        for category in $scope.categories
+            if category.id == data.category_id
+              data.category = category.name
         $scope.products.unshift(data)
         $scope.product =
           name: ""
           price: 0
-
-    $http.post("/api/products", {product: $scope.product})
-      .then (response) ->
-        response.data.state = 'show'
-        $scope.products.unshift(response.data)
-        $scope.product =
-          name: ""
-          price: 0
+          category_id: $scope.categories[0].id
+    # $http.post("/api/products", {product: $scope.product})
+    #   .then (response) ->
+    #     response.data.state = 'show'
+    #     $scope.products.unshift(response.data)
+    #     $scope.product =
+    #       name: ""
+    #       price: 0
       .catch (err)->
-        debugger
+        $scope.errors = []
+        for e in err.data
+          $scope.errors.push(e)
 
   $scope.calculateAge = ->
     return parseFloat($scope.user.age)+1
 
+  $scope.addCategory = ->
+    $http.post("/api/categories", {category: $scope.category})
+      .then (response) ->
+        response.data.state = 'show'
+        $scope.categories.push(response.data)
+        $scope.category =
+          name: ""
+      .catch (err)->
+        debugger
+
+  $scope.deleteCategory =(obj)->
+    $http.delete("/api/categories/#{obj.id}")
+    debugger
+    for p in $scope.products
+      if p.category_id == obj.id
+        p.category_id = $scope.categories[0].id
+        $scope.saveProduct(p)
+    $scope.categories.splice($scope.categories.indexOf(obj),1)
+
+  $scope.editCategory =(category)->
+    tempCategory = angular.copy category
+    category.state = 'edit'
+
+  $scope.cancelEditC =(obj)->
+      obj.name = tempCategory.name
+      obj.state = 'show'
+      tempCategory = {}
+
+  $scope.saveCategory =(obj)->
+    $http.patch("/api/categories/#{obj.id}", {category: obj})
+    obj.state = 'show'
+
+  $scope.getCategories = ->
+    $http.get("/api/categories")
+      .then (response)->
+        for category in response.data
+          category.state = 'show'
+          $scope.categories.push category
+        $scope.product.category_id = $scope.categories[0].id
+
+  $scope.showForm = ->
+    if $scope.hide.buttonProduct == false
+      $scope.hide.formProduct = false
+      $scope.hide.buttonProduct = true
+    else
+      $scope.hide.formProduct = true
+      $scope.hide.buttonProduct = false
+
+  $scope.sortBy =(val)->
+    $scope.sortVal = val
+
+
+  $scope.getCategories()
   $scope.getProducts()
 
   # $scope.uiState =

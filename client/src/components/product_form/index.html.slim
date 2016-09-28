@@ -1,0 +1,34 @@
+form name="productForm"
+  //
+    a.btn.btn-danger(ng-click="showForm()") x
+    ul ng-if="errors.length > 0"
+      li ng-repeat="e in errors"
+        span ng-bind="e"
+  .row
+    .col-xs-1.col-xs-offset-1
+      label Product Name
+    .col-md-offset-2
+      input(
+        type="email"
+        ng-class="{'error': productForm.name.$error.required && productForm.$dirty}"
+        name="name"
+        required="true"
+        ng-model="product.name")
+
+      br
+    .col-xs-1.col-xs-offset-1
+      label Price
+    .col-md-offset-2
+      input(
+      type="text"
+      ng-class="{'error': productForm.name.$error.required && productForm.$submitted}"
+      ng-model="product.price"
+      required="true")
+
+    .col-xs-1.col-xs-offset-1
+      label Category
+    .col-md-offset-2
+      select ng-model="product.category_id" ng-options="c.id as c.name for c in categories"
+    .col-xs-offset-1
+      br
+      a.btn.btn-success(ng-click="onSubmit(productForm)") add product

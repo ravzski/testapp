@@ -5,6 +5,10 @@ Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
   $scope.errors = []
   tempProduct = {}
   tempCategory = {}
+
+  $scope.uiState =
+    productForm: false
+
   $scope.hide =
     formProduct: true
     buttonProduct: false
@@ -37,7 +41,7 @@ Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
     #obj.save()
 
   $scope.deleteProduct =(obj)->
-    $http.delete("/api/products/#{obj.id}")
+    Product.delete({id: obj.id})
     $scope.products.splice($scope.products.indexOf(obj),1)
 
   $scope.editProduct =(product)->
@@ -60,18 +64,14 @@ Ctrl = ($scope,$state,Session,growl,$http,Auth,Product)->
               product.category = category.name
           $scope.products.push product
 
-  $scope.addProduct = ->
-    Product.save({product: $scope.product}).$promise
+  $scope.addProduct =(product)->
+    Product.save({product: product}).$promise
       .then (data)->
         data.state = 'show'
         for category in $scope.categories
             if category.id == data.category_id
               data.category = category.name
         $scope.products.unshift(data)
-        $scope.product =
-          name: ""
-          price: 0
-          category_id: $scope.categories[0].id
     # $http.post("/api/products", {product: $scope.product})
     #   .then (response) ->
     #     response.data.state = 'show'

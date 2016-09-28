@@ -19,6 +19,7 @@ gem 'sidekiq-failures'
 gem 'whenever'
 gem 'aws-sdk'
 gem 'paperclip'
+gem 'pg'
 
 gem 'angular-rails-templates'
 

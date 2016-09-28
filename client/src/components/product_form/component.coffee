@@ -9,8 +9,6 @@ Ctrl =($scope)->
     form.$submitted = true
     $scope.addProduct({product: $scope.product}) if form.$valid
 
-    # form validation
-    #$scope.addProduct({product: $scope.product})
 
 angular.module('client').directive 'productForm',->
   templateUrl: 'components/product_form/index.html'
